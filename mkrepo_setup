@@ -26,21 +26,24 @@ mkdir -p notebooks
 touch data/raw/.gitkeep data/processed/.gitkeep
 
 # Create placeholder .gitignore file
-echo "# Ignore Python bytecode files" > .gitignore
-echo "__pycache__/" >> .gitignore
-echo "*.pyc" >> .gitignore
-echo "" >> .gitignore
-echo "# Ignore data files" >> .gitignore
-echo "data/" >> .gitignore
-echo "!data/raw/.gitkeep" >> .gitignore
-echo "!data/processed/.gitkeep" >> .gitignore
-echo "" >> .gitignore
-echo "# Ignore Jupyter Notebook checkpoints" >> .gitignore
-echo ".ipynb_checkpoints/" >> .gitignore
+cat <<EOF > .gitignore
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore data files
+data/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+EOF
 
 # Create subdirectory within docs for project documentation
 cd docs
 mkdir -p 00_overview 01_architecture 02_data_sources 03_notebooks 04_reports 05_powerbi 06_database 07_models 08_deployment 09_security 10_operations 11_project_diary 12_future_plans 13_lessons_learned 14_risk_scoring 15_medium_blog
+touch 00_overview/.gitkeep 01_architecture/.gitkeep 02_data_sources/.gitkeep 03_notebooks/.gitkeep 04_reports/.gitkeep 05_powerbi/.gitkeep 06_database/.gitkeep 07_models/.gitkeep 08_deployment/.gitkeep 09_security/.gitkeep 10_operations/.gitkeep 11_project_diary/.gitkeep 12_future_plans/.gitkeep 13_lessons_learned/.gitkeep 14_risk_scoring/.gitkeep 15_medium_blog/.gitkeep
 cd ..
 
 # Create notebook template in notebooks directory
@@ -52,11 +55,15 @@ cd ..
 cd src
 mkdir -p "$1"
 cd "$1"
-mkdir -p config api core templates utils visualization static models schemas services
+mkdir -p config api core templates utils visualization static models schemas services db
+touch templates/.gitkeep static/.gitkeep
 cd ../../
 
 # Create __init__.py files to mark directories as Python packages
-find src -type d -exec touch {}/__init__.py \;
+for d in api core schemas services config utils models db visualization; do
+  touch "src/$1/$d/__init__.py"
+done
+touch "src/$1/__init__.py"
 
 # Create tests subdirectories
 cd tests
@@ -68,6 +75,46 @@ find tests -type d -exec touch {}/__init__.py \;
 
 # Create .env.example
 touch .env.example
+
+# Setup for Docker
+mkdir -p docker
+touch docker/.gitkeep
+cat <<EOF > .dockerignore
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+.venv-reports/
+.venv-deploy/
+venv/
+
+# Git
+.git/
+.gitignore
+
+# Notebooks & docs
+notebooks/
+docs/
+
+# Data & ML artifacts (mount separately if needed)
+data/
+artifacts/
+
+# Tests
+tests/
+
+# Logs & results
+logs/
+results/
+figures/
+
+# OS files
+.DS_Store
+Thumbs.db
+EOF
 
 # Final message
 echo "✅ Repository structure for '$1' has been created."
