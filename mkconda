@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Creates a conda environment with a name and optional Python version
+# Usage: mkconda <env_name> [python_version]
+# Example: mkconda my_api 3.11
+
+# Exit on error
+set -e
+
+if [ -z "$1" ]; then          # -z is checking for an empty string
+  echo "❌ Error: environment name required."
+  echo "Usage: mkconda <env_name> [python_version]"
+  exit 1                     # exits the script if no argument was passed
+fi
+
+PYTHON_VERSION=${2:-3.12}   # default version of 3.12 if no version passed
+
+echo "📦 Creating conda environment '$1' with Python $PYTHON_VERSION..."
+conda create -n "$1" python=$PYTHON_VERSION -y
+
+echo "✅ Environment '$1' created successfully."
+echo "👉 To activate it, run: conda activate $1"
+

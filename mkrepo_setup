@@ -1,0 +1,75 @@
+#!/bin/bash
+# ======================================================
+# mkrepo_setup — Sets up a new project repository folder structure
+# Usage: mkrepo_setup <repo_name>
+# Example: mkrepo_setup my_project
+# ======================================================
+
+# Exit immediately if a command fails
+set -e
+if [ -z "$1" ]; then
+    echo "❌ Error: No repository name provided."
+    echo " Usage: mkrepo_setup <repo_name>"
+    exit 1
+fi
+
+# Create the main project directory
+mkdir -p "$1"
+cd "$1"
+
+# Create common subdirectories
+mkdir -p src tests docs artifacts figures results logs
+mkdir -p data/raw data/processed
+mkdir -p notebooks
+
+# Create .gitkeep to track data directories as an empty directory
+touch data/raw/.gitkeep data/processed/.gitkeep
+
+# Create placeholder .gitignore file
+echo "# Ignore Python bytecode files" > .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+echo "" >> .gitignore
+echo "# Ignore data files" >> .gitignore
+echo "data/" >> .gitignore
+echo "!data/raw/.gitkeep" >> .gitignore
+echo "!data/processed/.gitkeep" >> .gitignore
+echo "" >> .gitignore
+echo "# Ignore Jupyter Notebook checkpoints" >> .gitignore
+echo ".ipynb_checkpoints/" >> .gitignore
+
+# Create subdirectory within docs for project documentation
+cd docs
+mkdir -p 00_overview 01_architecture 02_data_sources 03_notebooks 04_reports 05_powerbi 06_database 07_models 08_deployment 09_security 10_operations 11_project_diary 12_future_plans 13_lessons_learned 14_risk_scoring 15_medium_blog
+cd ..
+
+# Create notebook template in notebooks directory
+cd notebooks
+touch 00_baseline.ipynb 01_eda.ipynb 02_feature_engineering.ipynb 03_modeling.ipynb 04_evaluation.ipynb 05_conclusion.ipynb
+cd ..
+
+# Create src subdirectories for organization
+cd src
+mkdir -p "$1"
+cd "$1"
+mkdir -p config api core templates utils visualization static models schemas services
+cd ../../
+
+# Create __init__.py files to mark directories as Python packages
+find src -type d -exec touch {}/__init__.py \;
+
+# Create tests subdirectories
+cd tests
+mkdir -p unit integration system
+cd ..
+
+# Create __init__.py files in tests directories
+find tests -type d -exec touch {}/__init__.py \;
+
+# Create .env.example
+touch .env.example
+
+# Final message
+echo "✅ Repository structure for '$1' has been created."
+echo "👉 Navigate to your project folder: cd $1"
+echo "Happy Coding!!!"

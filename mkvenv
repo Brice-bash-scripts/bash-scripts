@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# ======================================================
+# mkvenv — Creates a pip-based Python virtual environment
+# Usage: mkvenv [env_name]
+# Example: mkvenv backend_env
+# ======================================================
+
+# Exit immediately if a command fails
+set -e
+
+# Default to 'venv' if no name is provided
+ENV_NAME=${1:-venv}
+
+# Check if environment folder already exists
+if [ -d "$ENV_NAME" ]; then
+  echo "⚠️  Virtual environment '$ENV_NAME' already exists."
+  echo "👉 To activate it, run: source $ENV_NAME/bin/activate"
+  echo "❌ Aborting to prevent overwrite."
+  exit 1
+fi
+
+# Create the virtual environment
+echo "📦 Creating Python virtual environment: '$ENV_NAME'..."
+python3 -m venv "$ENV_NAME"
+
+# Verify creation succeeded
+if [ $? -eq 0 ]; then
+  echo "✅ Virtual environment '$ENV_NAME' created successfully!"
+  echo "👉 To activate it, run: source $ENV_NAME/bin/activate"
+else
+  echo "❌ Failed to create virtual environment."
+  exit 1
+fi
+
