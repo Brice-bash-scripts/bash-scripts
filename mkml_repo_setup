@@ -22,9 +22,6 @@ mkdir -p src tests docs artifacts figures results logs
 mkdir -p data/raw data/processed
 mkdir -p notebooks
 
-# Create .gitkeep to track data directories as an empty directory
-touch data/raw/.gitkeep data/processed/.gitkeep
-
 # Create placeholder .gitignore file
 cat <<EOF > .gitignore
 # Ignore Python bytecode files
@@ -32,9 +29,24 @@ __pycache__/
 *.pyc
 
 # Ignore data files
-data/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
+data/**
+
+# Ignore virtual environments
+.venv/venv-reports/
+.venv-deploy/venv/
+venv/
+
+# Ignore environment files
+.env
+.env.prod
+.env.local
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore logs
+logs/*.log
 
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints/

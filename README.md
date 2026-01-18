@@ -17,11 +17,15 @@ They encode my **default workflow assumptions** so I don’t have to re-think se
 
 ```plaintext
 scripts/
+├── docs/
+│   ├── structure.md        # Explanation of the project structure created
+│   └── executable_usage.md  # Instructions for making scripts executable
 ├── find.sh        # Fast file / directory search helpers
 ├── intro.sh       # Environment intro / sanity checks (.gitignore)
 ├── mkconda        # Conda environment creation helper
 ├── mkvenv         # Python venv creation helper
-├── mkrepo_setup   # Project repository scaffold generator
+├── mkml_repo_setup   # Project repository scaffold generator for ML projects
+├── mkback_repo_setup   # Project repository scaffold generator for backend projects
 ├── .gitignore
 └── README.md
 ```
