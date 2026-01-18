@@ -8,6 +8,7 @@ From the directory where the script lives, run:
 chmod +x mkback_repo_setup
 ```
 
+reload the shell if necessary (e.g., `source ~/.bashrc` or `source ~/.zshrc`).
 You can then execute it with:
 
 ```bash

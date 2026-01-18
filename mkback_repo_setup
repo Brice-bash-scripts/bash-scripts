@@ -88,7 +88,7 @@ cd ../workers
 touch __init__.py background_tasks.py
 cd ../integrations
 touch __init__.py stripe_client.py sendgrid_client.py
-cd ../../
+cd ../../../
 
 # Create __init__.py files to mark directories as Python packages
 touch "src/$PKG_NAME/__init__.py"
