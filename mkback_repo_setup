@@ -1,0 +1,170 @@
+#!/bin/bash
+# ======================================================
+# mkback_repo_setup — Sets up a new project repository folder structure
+# Usage: mkback_repo_setup <repo_name>
+# Example: mkback_repo_setup my_project
+# ======================================================
+
+# Exit immediately if a command fails
+set -e
+if [ -z "$1" ]; then
+    echo "❌ Error: No repository name provided."
+    echo " Usage: mkback_repo_setup <repo_name>"
+    exit 1
+fi
+
+# Define package name
+REPO_NAME="$1"
+
+# Python package name must be a valid identifier
+PKG_NAME="${REPO_NAME//-/_}"
+
+# Create the main project directory
+mkdir -p "$REPO_NAME"
+cd "$REPO_NAME"
+
+# Create common subdirectories
+mkdir -p src tests docs scripts infra logs
+
+# Create placeholder .gitignore file
+cat <<EOF > .gitignore
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+EOF
+
+# Create subdirectory within docs for project documentation
+cd docs
+mkdir -p 00_overview 01_architecture 02_api 03_auth 04_security 05_database 06_deployment 07_operations 08_project_diary 09_future_plans 10_lessons_learned 11_medium_blog
+touch 00_overview/.gitkeep 01_architecture/.gitkeep 02_api/.gitkeep 03_auth/.gitkeep 04_security/.gitkeep 05_database/.gitkeep 06_deployment/.gitkeep 07_operations/.gitkeep 08_project_diary/.gitkeep 09_future_plans/.gitkeep 10_lessons_learned/.gitkeep 11_medium_blog/.gitkeep
+cd ..
+
+# Create src subdirectories for organization
+cd src
+mkdir -p "$PKG_NAME"
+cd "$PKG_NAME"
+mkdir -p config api auth core templates utils static models schemas services db repositories workers integrations 
+mkdir -p api/v1
+cd config 
+touch __init__.py settings.py
+cd ../api
+touch __init__.py router.py
+cd v1
+touch __init__.py routes_health.py routes_users.py routes_admin.py
+cd ../../core
+touch __init__.py logging.py middleware.py security.py exceptions.py
+cd ../templates
+mkdir -p auth errors email
+touch base.html 
+cd errors
+touch 404.html 500.html
+cd ../auth
+touch register.html login.html reset_password.html
+cd ../email
+touch base_email.html password_reset.html
+cd ../../utils
+touch hashing.py datetime.py pagination.py
+cd ../static
+mkdir -p css js img
+touch css/.gitkeep js/.gitkeep img/.gitkeep
+cd ../models
+touch __init__.py base.py user.py audit_log.py
+cd ../schemas
+touch __init__.py user.py common.py
+cd ../auth
+touch __init__.py routes.py schemas.py service.py tokens.py dependencies.py
+cd ../services
+touch __init__.py user_service.py email_service.py
+cd ../db
+touch __init__.py session.py base.py
+mkdir migrations
+touch migrations/.gitkeep
+cd ../repositories
+touch __init__.py user_repository.py audit_repository.py
+cd ../workers
+touch __init__.py background_tasks.py
+cd ../integrations
+touch __init__.py stripe_client.py sendgrid_client.py
+cd ../../
+
+# Create __init__.py files to mark directories as Python packages
+touch "src/$PKG_NAME/__init__.py"
+
+# Create entry file to application
+touch "src/$PKG_NAME/main.py"
+
+# Create tests subdirectories
+cd tests
+mkdir -p unit integration api
+cd ..
+
+# Create __init__.py files in tests directories
+find tests -type d -exec touch {}/__init__.py \;
+
+# Create conftest file
+cd tests 
+touch conftest.py
+cd ..
+
+# Create github actions workflow
+mkdir -p .github/workflows
+touch .github/workflows/ci.yml
+
+# Create precommit configuration file
+touch .pre-commit-config.yaml
+
+# Create .env.example
+touch .env.example
+
+# Create .gitkeep in empty top directories
+for d in scripts logs infra; do
+  touch "$d/.gitkeep"
+done
+
+# Setup for Docker
+mkdir -p docker
+touch docker/.gitkeep
+cat <<EOF > .dockerignore
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+.venv-reports/
+.venv-deploy/
+venv/
+
+# Git
+.git/
+.gitignore
+
+# Notebooks & docs
+notebooks/
+docs/
+
+# Data & ML artifacts (mount separately if needed)
+data/
+artifacts/
+
+# Tests
+tests/
+
+# Logs & results
+logs/
+results/
+figures/
+
+# OS files
+.DS_Store
+Thumbs.db
+EOF
+
+# Final message
+echo "✅ Repository structure for '$PKG_NAME' has been created."
+echo "👉 Navigate to your project folder: cd $PKG_NAME"
+echo "Happy Coding!!!"

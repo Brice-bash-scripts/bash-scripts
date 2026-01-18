@@ -1,15 +1,15 @@
 #!/bin/bash
 # ======================================================
-# mkrepo_setup — Sets up a new project repository folder structure
-# Usage: mkrepo_setup <repo_name>
-# Example: mkrepo_setup my_project
+# mkml_repo_setup — Sets up a new project repository folder structure
+# Usage: mkml_repo_setup <repo_name>
+# Example: mkml_repo_setup my_project
 # ======================================================
 
 # Exit immediately if a command fails
 set -e
 if [ -z "$1" ]; then
     echo "❌ Error: No repository name provided."
-    echo " Usage: mkrepo_setup <repo_name>"
+    echo " Usage: mkml_repo_setup <repo_name>"
     exit 1
 fi
 
