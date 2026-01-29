@@ -60,6 +60,9 @@ cd ..
 cd src
 mkdir -p "$PKG_NAME"
 cd "$PKG_NAME"
+# Create entry file to application and initialize package
+touch main.py __init__.py
+# Create subdirectories for backend structure and start files
 mkdir -p config api auth core templates utils static models schemas services db repositories workers integrations 
 mkdir -p api/v1
 cd config 
@@ -104,11 +107,6 @@ cd ../integrations
 touch __init__.py stripe_client.py sendgrid_client.py
 cd ../../../
 
-# Create __init__.py files to mark directories as Python packages
-touch "src/$PKG_NAME/__init__.py"
-
-# Create entry file to application
-touch "src/$PKG_NAME/main.py"
 
 # Create tests subdirectories
 cd tests
