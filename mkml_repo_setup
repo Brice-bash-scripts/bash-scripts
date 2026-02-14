@@ -54,13 +54,13 @@ EOF
 
 # Create subdirectory within docs for project documentation
 cd docs
-mkdir -p 00_overview 01_architecture 02_data_sources 03_notebooks 04_reports 05_powerbi 06_database 07_models 08_deployment 09_security 10_operations 11_project_diary 12_future_plans 13_lessons_learned 14_risk_scoring 15_medium_blog
+mkdir -p 00_overview 01_architecture 02_data_sources 03_notebooks 04_reports 05_powerbi 06_database 07_models 08_api 09_etl 10_deployment 11_security 12_operations 13_project_diary 14_future_plans 15_lessons_learned 16_risk_scoring 17_medium_blog
 touch 00_overview/.gitkeep 01_architecture/.gitkeep 02_data_sources/.gitkeep 03_notebooks/.gitkeep 04_reports/.gitkeep 05_powerbi/.gitkeep 06_database/.gitkeep 07_models/.gitkeep 08_deployment/.gitkeep 09_security/.gitkeep 10_operations/.gitkeep 11_project_diary/.gitkeep 12_future_plans/.gitkeep 13_lessons_learned/.gitkeep 14_risk_scoring/.gitkeep 15_medium_blog/.gitkeep
 cd ..
 
 # Create notebook template in notebooks directory
 cd notebooks
-touch 00_baseline.ipynb 01_eda.ipynb 02_feature_engineering.ipynb 03_modeling.ipynb 04_evaluation.ipynb 05_conclusion.ipynb
+touch 00_data_ingestion.ipynb 01_baseline_analysis.ipynb 02_eda.ipynb 03_feature_engineering.ipynb 04_modeling.ipynb 05_evaluation.ipynb 06_conclusion.ipynb
 cd ..
 
 # Create src subdirectories for organization

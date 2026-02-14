@@ -1,0 +1,56 @@
+# ------------------------------------------------------------
+# ve_switch
+#
+# A simple virtual environment switcher for uv-based projects.
+#
+# This function switches the active UV project environment by
+# setting the UV_PROJECT_ENVIRONMENT environment variable.
+#
+# It assumes your environments follow this naming convention:
+#     .venv-<name>
+#
+# ------------------------------------------------------------
+# USAGE:
+#
+#   ve_switch                # Show current environment
+#   ve_switch reports        # Switch to .venv-reports
+#   ve_switch deploy         # Switch to .venv-deploy
+#
+# EXAMPLE:
+#
+#   $ ve_switch reports
+#   ✅ UV switched to: .venv-reports
+#
+#   $ ve_switch
+#   Current environment: .venv-reports
+#
+# NOTES:
+# - The function does NOT activate the environment.
+# - It only changes UV_PROJECT_ENVIRONMENT.
+# - The directory must already exist.
+# ------------------------------------------------------------
+
+# A simple switcher for your infrastructure projects
+ve_switch() {
+    # If no argument is provided, display the current environment.
+    # If UV_PROJECT_ENVIRONMENT is not set, default to "Standard .venv".
+    if [ -z "$1" ]; then
+        echo "Current environment: ${UV_PROJECT_ENVIRONMENT:-Standard .venv}"
+        return 0
+    fi
+
+    # Construct the target environment directory name.
+    # Example: ve_switch reports → .venv-reports
+    local target=".venv-$1"
+
+    # Check if the target directory exists.
+    if [ -d "$target" ]; then
+        # Export the environment variable so uv uses this environment.
+        export UV_PROJECT_ENVIRONMENT="$target"
+        echo "✅ UV switched to: $UV_PROJECT_ENVIRONMENT"
+    else
+        # If directory does not exist, return an error.
+        echo "❌ Error: Directory '$target' not found."
+        return 1
+    fi
+}
