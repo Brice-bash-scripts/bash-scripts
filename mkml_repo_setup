@@ -1,134 +1,343 @@
 #!/bin/bash
 # ======================================================
-# mkml_repo_setup — Sets up a new project repository folder structure
+# mkml_repo_setup — Sets up a new ML / Backend project repo
 # Usage: mkml_repo_setup <repo_name>
-# Example: mkml_repo_setup my_project
+# Example: mkml_repo_setup infra_climate_risk_platform
 # ======================================================
 
-# Exit immediately if a command fails
 set -e
+
 if [ -z "$1" ]; then
     echo "❌ Error: No repository name provided."
-    echo " Usage: mkml_repo_setup <repo_name>"
+    echo "Usage: mkml_repo_setup <repo_name>"
     exit 1
 fi
 
-# Create the main project directory
-mkdir -p "$1"
-cd "$1"
+REPO_NAME="$1"
 
-# Create common subdirectories
-mkdir -p src tests docs artifacts figures results logs
-mkdir -p data/raw data/processed
-mkdir -p notebooks
+echo "🚀 Creating repository: $REPO_NAME"
 
-# Create placeholder .gitignore file
-cat <<EOF > .gitignore
-# Ignore Python bytecode files
-__pycache__/
-*.pyc
+# ------------------------------------------------------
+# Main repository directory
+# ------------------------------------------------------
 
-# Ignore data files
-data/**
+mkdir -p "$REPO_NAME"
+cd "$REPO_NAME"
 
-# Ignore virtual environments
-.venv/venv-reports/
-.venv-deploy/venv/
-venv/
+# ------------------------------------------------------
+# Core project directories
+# ------------------------------------------------------
 
-# Ignore environment files
-.env
-.env.prod
-.env.local
+mkdir -p \
+src \
+tests \
+docs \
+notebooks \
+scripts \
+data/raw \
+data/processed \
+artifacts \
+figures \
+results \
+logs \
+docker
 
-# Ignore IDE files
-.vscode/
-.idea/
+touch scripts/.gitkeep
 
-# Ignore logs
-logs/*.log
+# ------------------------------------------------------
+# Python source structure
+# ------------------------------------------------------
 
-# Ignore Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-EOF
+mkdir -p \
+src/"$REPO_NAME"/api \
+src/"$REPO_NAME"/core \
+src/"$REPO_NAME"/config \
+src/"$REPO_NAME"/services \
+src/"$REPO_NAME"/schemas \
+src/"$REPO_NAME"/utils \
+src/"$REPO_NAME"/models \
+src/"$REPO_NAME"/db \
+src/"$REPO_NAME"/visualization \
+src/"$REPO_NAME"/templates \
+src/"$REPO_NAME"/static
 
-# Create subdirectory within docs for project documentation
-cd docs
-mkdir -p 00_overview 01_architecture 02_data_sources 03_notebooks 04_reports 05_powerbi 06_database 07_models 08_api 09_etl 10_deployment 11_security 12_operations 13_project_diary 14_future_plans 15_lessons_learned 16_risk_scoring 17_medium_blog
-touch 00_overview/.gitkeep 01_architecture/.gitkeep 02_data_sources/.gitkeep 03_notebooks/.gitkeep 04_reports/.gitkeep 05_powerbi/.gitkeep 06_database/.gitkeep 07_models/.gitkeep 08_deployment/.gitkeep 09_security/.gitkeep 10_operations/.gitkeep 11_project_diary/.gitkeep 12_future_plans/.gitkeep 13_lessons_learned/.gitkeep 14_risk_scoring/.gitkeep 15_medium_blog/.gitkeep
-cd ..
+touch src/"$REPO_NAME"/__init__.py
 
-# Create notebook template in notebooks directory
-cd notebooks
-touch 00_data_ingestion.ipynb 01_baseline_analysis.ipynb 02_eda.ipynb 03_feature_engineering.ipynb 04_modeling.ipynb 05_evaluation.ipynb 06_conclusion.ipynb
-cd ..
-
-# Create src subdirectories for organization
-cd src
-mkdir -p "$1"
-cd "$1"
-mkdir -p config api core templates utils visualization static models schemas services db
-touch templates/.gitkeep static/.gitkeep
-cd ../../
-
-# Create __init__.py files to mark directories as Python packages
-for d in api core schemas services config utils models db visualization; do
-  touch "src/$1/$d/__init__.py"
+for d in api core config services schemas utils models db visualization; do
+    touch "src/$REPO_NAME/$d/__init__.py"
 done
-touch "src/$1/__init__.py"
 
-# Create tests subdirectories
-cd tests
-mkdir -p unit integration system
-cd ..
+touch src/"$REPO_NAME"/templates/.gitkeep
+touch src/"$REPO_NAME"/static/.gitkeep
 
-# Create __init__.py files in tests directories
+# ------------------------------------------------------
+# Tests
+# ------------------------------------------------------
+
+mkdir -p tests/{unit,integration,system}
+
 find tests -type d -exec touch {}/__init__.py \;
 
-# Create .env.example
+# ------------------------------------------------------
+# Documentation structure (Improved for scalability)
+# ------------------------------------------------------
+
+cd docs
+
+DOC_DIRS=(
+00_overview
+01_architecture
+02_data
+03_models
+04_api
+05_deployment
+06_operations
+07_security
+08_research
+09_project_diary
+)
+
+mkdir -p "${DOC_DIRS[@]}"
+
+for d in "${DOC_DIRS[@]}"; do
+    touch "$d/.gitkeep"
+done
+
+cd ..
+
+# ------------------------------------------------------
+# Notebook templates
+# ------------------------------------------------------
+
+NOTEBOOKS=(
+00_data_ingestion.ipynb
+01_baseline_analysis.ipynb
+02_eda.ipynb
+03_feature_engineering.ipynb
+04_modeling.ipynb
+05_evaluation.ipynb
+06_conclusion.ipynb
+)
+
+for nb in "${NOTEBOOKS[@]}"; do
+    touch "notebooks/$nb"
+done
+
+# ------------------------------------------------------
+# Example pipeline scripts
+# ------------------------------------------------------
+
+SCRIPTS=(
+download_data.py
+build_features.py
+train_model.py
+evaluate_model.py
+run_pipeline.py
+)
+
+for s in "${SCRIPTS[@]}"; do
+    touch "scripts/$s"
+done
+
+# ------------------------------------------------------
+# Environment example
+# ------------------------------------------------------
+
 touch .env.example
 
-# Setup for Docker
-mkdir -p docker
-touch docker/.gitkeep
+# ------------------------------------------------------
+# Gitignore
+# ------------------------------------------------------
+
+cat <<EOF > .gitignore
+# ==========================================================
+# Python
+# ==========================================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Compiled extensions
+*.so
+*.pyd
+*.dll
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ==========================================================
+# Virtual Environments
+# ==========================================================
+
+venv/
+.venv/
+env/
+ENV/
+
+# uv environments
+.venv-*/
+.uv/
+
+# conda environments
+conda-meta/
+conda-env/
+*.conda
+*.env
+
+# ==========================================================
+# Python Package Managers
+# ==========================================================
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# poetry
+poetry.toml
+
+# ==========================================================
+# Environment variables / secrets
+# ==========================================================
+
+.env
+.env.*
+*.env
+
+# ==========================================================
+# Jupyter
+# ==========================================================
+
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# ==========================================================
+# Data / ML artifacts
+# ==========================================================
+
+data/
+artifacts/*
+!artifacts/model.pkl
+results/
+figures/
+logs/
+
+*.h5
+*.hdf5
+*.model
+*.onnx
+
+# ==========================================================
+# Testing / coverage
+# ==========================================================
+
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+htmlcov/
+
+# ==========================================================
+# IDE — VSCode
+# ==========================================================
+
+.vscode/
+.history/
+
+# ==========================================================
+# IDE — JetBrains (PyCharm / IntelliJ)
+# ==========================================================
+
+.idea/
+*.iml
+out/
+
+# ==========================================================
+# OS files
+# ==========================================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================================
+# Logs
+# ==========================================================
+
+*.log
+logs/
+
+# ==========================================================
+# Docker
+# ==========================================================
+
+docker/*.log
+docker/tmp/
+
+# ==========================================================
+# Temporary files
+# ==========================================================
+
+*.tmp
+*.swp
+*.swo
+*~
+
+# ==========================================================
+# Misc
+# ==========================================================
+
+.cache/
+tmp/
+temp/
+
+EOF
+
+# ------------------------------------------------------
+# Docker ignore
+# ------------------------------------------------------
+
 cat <<EOF > .dockerignore
-# Python cache
 __pycache__/
 *.pyc
 *.pyo
 
-# Virtual environments
 .venv/
-.venv-reports/
-.venv-deploy/
 venv/
 
-# Git
-.git/
+.git
 .gitignore
 
-# Notebooks & docs
-notebooks/
-docs/
-
-# Data & ML artifacts (mount separately if needed)
 data/
 artifacts/
 
-# Tests
 tests/
+docs/
+notebooks/
 
-# Logs & results
 logs/
 results/
 figures/
 
-# OS files
 .DS_Store
 Thumbs.db
 EOF
 
+touch docker/.gitkeep
+
+# ------------------------------------------------------
 # Final message
-echo "✅ Repository structure for '$1' has been created."
-echo "👉 Navigate to your project folder: cd $1"
-echo "Happy Coding!!!"
+# ------------------------------------------------------
+
+echo ""
+echo "✅ Repository '$REPO_NAME' created successfully."
+echo ""
+echo "Next steps:"
+echo "cd $REPO_NAME"
+echo "git init"
+echo ""
+echo "Happy building something unnecessarily sophisticated."
