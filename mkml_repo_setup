@@ -29,72 +29,34 @@ cd "$REPO_NAME"
 # ------------------------------------------------------
 
 mkdir -p \
-src \
-tests \
-docs \
-notebooks \
-scripts \
-data/raw \
-data/processed \
-artifacts \
-figures \
-results \
-logs \
-docker
+    artifacts \
+    data/raw \
+    data/processed \
+    docker \
+    figures \
+    logs \
+    notebooks \
+    results \
+    scripts
 
+touch docker/.gitkeep
 touch scripts/.gitkeep
 
 # ------------------------------------------------------
-# Python source structure
+# Documentation structure
 # ------------------------------------------------------
-
-mkdir -p \
-src/"$REPO_NAME"/api \
-src/"$REPO_NAME"/core \
-src/"$REPO_NAME"/config \
-src/"$REPO_NAME"/services \
-src/"$REPO_NAME"/schemas \
-src/"$REPO_NAME"/utils \
-src/"$REPO_NAME"/models \
-src/"$REPO_NAME"/db \
-src/"$REPO_NAME"/visualization \
-src/"$REPO_NAME"/templates \
-src/"$REPO_NAME"/static
-
-touch src/"$REPO_NAME"/__init__.py
-
-for d in api core config services schemas utils models db visualization; do
-    touch "src/$REPO_NAME/$d/__init__.py"
-done
-
-touch src/"$REPO_NAME"/templates/.gitkeep
-touch src/"$REPO_NAME"/static/.gitkeep
-
-# ------------------------------------------------------
-# Tests
-# ------------------------------------------------------
-
-mkdir -p tests/{unit,integration,system}
-
-find tests -type d -exec touch {}/__init__.py \;
-
-# ------------------------------------------------------
-# Documentation structure (Improved for scalability)
-# ------------------------------------------------------
-
-cd docs
 
 DOC_DIRS=(
-00_overview
-01_architecture
-02_data
-03_models
-04_api
-05_deployment
-06_operations
-07_security
-08_research
-09_project_diary
+    docs/00_overview
+    docs/01_architecture
+    docs/02_data
+    docs/03_models
+    docs/04_api
+    docs/05_deployment
+    docs/06_operations
+    docs/07_security
+    docs/08_research
+    docs/09_project_diary
 )
 
 mkdir -p "${DOC_DIRS[@]}"
@@ -103,20 +65,72 @@ for d in "${DOC_DIRS[@]}"; do
     touch "$d/.gitkeep"
 done
 
-cd ..
+# ------------------------------------------------------
+# Python source structure
+# ------------------------------------------------------
+
+PKG="src/$REPO_NAME"
+
+mkdir -p \
+    "$PKG/api/auth" \
+    "$PKG/api/db" \
+    "$PKG/api/routers" \
+    "$PKG/api/schemas" \
+    "$PKG/api/services" \
+    "$PKG/config" \
+    "$PKG/core" \
+    "$PKG/ml/data" \
+    "$PKG/ml/evaluation" \
+    "$PKG/ml/features" \
+    "$PKG/ml/inference" \
+    "$PKG/ml/models" \
+    "$PKG/ml/pipelines" \
+    "$PKG/ml/visualization" \
+    "$PKG/static" \
+    "$PKG/templates" \
+    "$PKG/utils"
+
+# Top-level package init
+touch "$PKG/__init__.py"
+
+# api sub-packages
+for d in auth db routers schemas services; do
+    touch "$PKG/api/$d/__init__.py"
+done
+
+# top-level sub-packages
+for d in config core utils; do
+    touch "$PKG/$d/__init__.py"
+done
+
+# ml sub-packages
+for d in data evaluation features inference models pipelines visualization; do
+    touch "$PKG/ml/$d/__init__.py"
+done
+
+touch "$PKG/static/.gitkeep"
+touch "$PKG/templates/.gitkeep"
+
+# ------------------------------------------------------
+# Tests
+# ------------------------------------------------------
+
+mkdir -p tests/unit tests/integration tests/system
+
+find tests -type d -exec touch {}/__init__.py \;
 
 # ------------------------------------------------------
 # Notebook templates
 # ------------------------------------------------------
 
 NOTEBOOKS=(
-00_data_ingestion.ipynb
-01_baseline_analysis.ipynb
-02_eda.ipynb
-03_feature_engineering.ipynb
-04_modeling.ipynb
-05_evaluation.ipynb
-06_conclusion.ipynb
+    00_data_ingestion.ipynb
+    01_baseline_analysis.ipynb
+    02_eda.ipynb
+    03_feature_engineering.ipynb
+    04_modeling.ipynb
+    05_evaluation.ipynb
+    06_conclusion.ipynb
 )
 
 for nb in "${NOTEBOOKS[@]}"; do
@@ -128,11 +142,11 @@ done
 # ------------------------------------------------------
 
 SCRIPTS=(
-download_data.py
-build_features.py
-train_model.py
-evaluate_model.py
-run_pipeline.py
+    download_data.py
+    build_features.py
+    train_model.py
+    evaluate_model.py
+    run_pipeline.py
 )
 
 for s in "${SCRIPTS[@]}"; do
@@ -140,10 +154,11 @@ for s in "${SCRIPTS[@]}"; do
 done
 
 # ------------------------------------------------------
-# Environment example
+# Root files
 # ------------------------------------------------------
 
 touch .env.example
+touch README.md
 
 # ------------------------------------------------------
 # Gitignore
@@ -220,6 +235,7 @@ poetry.toml
 # ==========================================================
 
 data/
+!$PKG/ml/data
 artifacts/*
 !artifacts/model.pkl
 results/
@@ -327,8 +343,6 @@ figures/
 Thumbs.db
 EOF
 
-touch docker/.gitkeep
-
 # ------------------------------------------------------
 # Final message
 # ------------------------------------------------------
@@ -337,7 +351,7 @@ echo ""
 echo "✅ Repository '$REPO_NAME' created successfully."
 echo ""
 echo "Next steps:"
-echo "cd $REPO_NAME"
-echo "git init"
+echo "  cd $REPO_NAME"
+echo "  git init"
 echo ""
 echo "Happy building something unnecessarily sophisticated."
