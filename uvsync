@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🔄 Syncing environment with uv (core + dev)..."
+uv sync --extra dev --active
+
+echo "🔧 Ensuring pip exists for PyCharm..."
+python -m ensurepip --upgrade >/dev/null 2>&1 || true
+
+echo "✅ Environment ready"
